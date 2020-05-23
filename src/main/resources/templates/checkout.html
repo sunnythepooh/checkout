@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Welcome shopper!</title>
+</head>
+<body>
+	<H1>Your Basket</H1>
+	<form action="#" th:action="@{/checkout/modifyItem}"></form>
+	<th:block th:if="!${productInBasket.isEmpty()}">
+
+		<th:block th:each="productItem: ${productInBasket}">
+			<form action="#" th:action="@{/checkout/modifyItem}">
+				<input type="hidden" id="productId" name="productId"
+					th:value="${productItem.key.id}"></input> <label>description:</label>
+				<input type="text" readonly="readonly"
+					th:value="${productItem.key.description}"></input> <label>price:</label>
+				<input type="number" readonly="readonly"
+					th:value="${productItem.key.price}"></input> <label>quantity:</label>
+				<input type="number" name="quantity" id="quantity"
+					th:value="${productItem.value}"></input>
+				<button type="submit" id="action" name="action" value="change">Change</button>
+				<button type="submit" id="action" name="action" value="remove">Remove</button>
+				<br>
+			</form>
+		</th:block>
+	</th:block>
+	
+	<h2>Total Price</h2>
+	[[${totalPrice}]]
+	
+	<th:block th:if="!${bundlesApplied.isEmpty()}">
+	<h2>Bundles Applied</h2>
+	<ul th:each="bundle: ${bundlesApplied}">
+		<li>[[${bundle.description}]]</li>
+	</ul>
+	</th:block>
+	
+	
+	<th:block th:if="!${dealsApplied.isEmpty()}">
+	<h2>Deals Applied</h2>
+	<ul th:each="deal: ${dealsApplied}">
+		<li>[[${deal.description}]]</li>
+	</ul>
+	</th:block>
+	
+	<h2>Add product to basket</h2>
+	<form action="#" th:action="@{/checkout/addItem}"
+		th:object="${basketItemForm}" method="post">
+		<p>
+			product: <select th:field="*{productId}">
+				<option th:each="product : ${@productManager.getAllProducts()}"
+					th:value="${product.id}" th:text="${product.description}"></option>
+			</select>
+		</p>
+		<p>
+			quantity: <input type="number" th:field="*{quantity}" />
+		</p>
+		<p>
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</p>
+	</form>
+</body>
+</html>

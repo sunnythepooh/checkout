@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<title>Welcome owner!</title>
+</head>
+<body>
+	<h1>Hello owner!</h1>
+	<table border=1>
+		<tr th:each="product: ${@productManager.getAllProducts()}">
+			<td th:text="${product.id}" />
+			<td th:text="${product.description}" />
+			<td th:text="${#numbers.formatCurrency(product.price)}" />
+		</tr>
+	</table>
+
+	<h2>Create New Product</h2>
+	<form action="#" th:action="@{/owner/create}"
+		th:object="${productForm}" method="post">
+		<p>
+			description: <input type="text" th:field="*{description}" />
+		</p>
+		<p>
+			price: <input type="number" th:field="*{price}" />
+		</p>
+		<p>
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</p>
+	</form>
+	<h2>Amend Product</h2>
+	<form action="#" th:action="@{/owner/amend}" th:object="${productForm}"
+		method="get">
+		<select th:field="*{id}">
+			<option th:each="product : ${@productManager.getAllProducts()}" th:value="${product.id}"
+				th:text="${product.description}"></option>
+		</select>
+		<p>
+			description: <input type="text" th:field="*{description}" />
+		</p>
+		<p>
+			price: <input type="number" th:field="*{price}" />
+		</p>
+		<p>
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</p>
+	</form>
+
+	<h2>Remove Product</h2>
+	<form action="#" th:action="@{/owner/remove}"
+		th:object="${productForm}" method="post">
+		<select th:field="*{id}">
+			<option th:each="product : ${@productManager.getAllProducts()}" th:value="${product.id}"
+				th:text="${product.description}"></option>
+		</select>
+		<p>
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</p>
+	</form>
+
+	<h2>Deals</h2>
+	<table border=1>
+		<tr>
+			<th>id</th>
+			<th>description</th>
+			<th>product</th>
+			<th>items</th>
+			<th>price</th>
+		<tr th:each="deal: ${@checkoutManager.getAllDeals()}">
+			<td th:text="${deal.id}" />
+			<td th:text="${deal.description}"/>
+			<td th:text="${deal.product.description}" />
+			<td th:text="${deal.numberOfItems}" />
+			<td th:text="${#numbers.formatCurrency(deal.price)}" />
+		</tr>
+	</table>
+
+	<h2>Apply Deal</h2>
+	<form action="#" th:action="@{/owner/applyDeal}"
+		th:object="${dealForm}" method="post">
+		<select th:field="*{productId}">
+			<option th:each="product : ${@productManager.getAllProducts()}" th:value="${product.id}"
+				th:text="${product.description}"></option>
+		</select>
+		<p>
+			description: <input type="text" th:field="*{description}" />
+		</p>
+		<p>
+			count: <input type="number" th:field="*{count}" />
+		</p>
+		<p>
+			price: <input type="number" th:field="*{price}" />
+		</p>
+
+		<p>
+			<input type="submit" value="Submit" /> <input type="reset"
+				value="Reset" />
+		</p>
+	</form>
+
+	<h2>Bundles</h2>
+	<table border=1>
+		<tr>
+			<th>id</th>
+			<th>description</th>
+			<th>products</th>
+			<th>price</th>
+		<tr th:each="bundle: ${@checkoutManager.getAllBundles()}">
+			<td th:text="${bundle.id}" />
+			<td th:text="${bundle.description}" />
+			<td th:text="${#strings.listJoin(bundle.bundledProduct.![description], ',')}" /> 
+			<td th:text="${#numbers.formatCurrency(bundle.price)}" />
+		</tr>
+	</table>
+
+	<h2>Apply Bundle</h2>
+	<form action="#" th:action="@{/owner/applyBundle}"
+		th:object="${bundleForm}" method="post">
+		<p>
+			description: <input type="text" th:field="*{description}" />
+		</p>
+		<th:block th:each="i: ${#numbers.sequence(1, 10)}">
+			<select th:field="*{productIds}">
+				<option selected="selected" value="-1"></option>
+				<option th:each="product : ${@productManager.getAllProducts()}" th:value="${product.id}"
+					th:text="${product.description}"></option>
+			</select>
+			<p>
+		</th:block>
+		<p>
+			price: <input type="number" th:field="*{price}" />
+		</p>
+		<input type="submit" value="Submit" /><input type="reset"
+			value="Reset" />
+	</form>
+</body>
+</html>
